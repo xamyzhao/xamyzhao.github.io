@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amy Zhao</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #F5F0E8;
+      --ink: #1A1612;
+      --navy: #C4470E;
+      --cool-gray: #8A837A;
+      --mid-gray: #6F6A63;
+      --light-rule: #DDD7CE;
+      --accent-pale: #F0E8DC;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 4rem;
+      background: rgba(245, 240, 232, 0.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--light-rule);
+    }
+
+    .nav-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--navy);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--navy); }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 7rem 4rem 5rem;
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      margin-bottom: 2.25rem;
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3.5rem, 6vw, 5.5rem);
+      line-height: 1.0;
+      font-weight: 400;
+      margin-bottom: 1.25rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.25s forwards;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--navy);
+    }
+
+    .hero-content {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 0.84fr);
+      gap: 2.7rem;
+      align-items: start;
+    }
+
+    .hero-summary { min-width: 0; }
+    .hero-timeline { min-width: 0; }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--mid-gray);
+      max-width: 44ch;
+      margin-bottom: 1.25rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.4s forwards;
+    }
+
+    .hero-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
+      padding: 1rem 0;
+      border-top: 1px solid var(--light-rule);
+      border-bottom: 1px solid var(--light-rule);
+      max-width: 620px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.55s forwards;
+    }
+
+
+    .memory-wheel {
+      margin-top: 0.7rem;
+      padding: 0.95rem 0 0.25rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.7s forwards;
+    }
+
+    .wheel-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 0.75rem;
+      font-weight: 500;
+    }
+
+    .wheel-viewport {
+      overflow: hidden;
+      border-radius: 10px;
+      border: 1px solid var(--light-rule);
+      background: linear-gradient(135deg, #f8f2e8 0%, #efe6d7 100%);
+      box-shadow: 0 14px 26px rgba(26, 22, 18, 0.08);
+    }
+
+    .wheel-track {
+      display: flex;
+      gap: 0.55rem;
+      width: max-content;
+      padding: 0.55rem;
+      animation: wheelScroll 30s linear infinite;
+    }
+
+    .wheel-viewport:hover .wheel-track {
+      animation-play-state: paused;
+    }
+
+    .wheel-item {
+      width: 150px;
+      height: 102px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(196, 71, 14, 0.14);
+      background: var(--accent-pale);
+      flex-shrink: 0;
+    }
+
+    .wheel-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(0.95) contrast(1.02);
+      transition: transform 0.25s ease;
+    }
+
+    .wheel-item:hover img {
+      transform: scale(1.04);
+    }
+    .hero-info-item {
+      display: grid;
+      grid-template-columns: 8.5rem 1fr;
+      gap: 0.75rem;
+      align-items: baseline;
+    }
+
+    .info-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      color: var(--navy);
+      opacity: 0.85;
+      padding-top: 0.1rem;
+      white-space: nowrap;
+    }
+
+    .info-value {
+      font-size: 0.875rem;
+      color: var(--mid-gray);
+      line-height: 1.5;
+    }
+
+    .info-value strong {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .hero-photo {
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center 15%;
+      flex-shrink: 0;
+      opacity: 0;
+      animation: fadeIn 0.8s ease 0.1s forwards;
+    }
+
+    .hero-tag {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.45rem;
+    }
+
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.7rem;
+      border-radius: 3px;
+      border: none;
+      color: rgba(196, 71, 14, 0.75);
+      background: rgba(196, 71, 14, 0.1);
+      opacity: 0;
+      animation: fadeIn 0.5s ease 0.9s forwards;
+    }
+
+    /* SECTIONS */
+    section {
+      padding: 6rem 4rem;
+      border-top: 1px solid var(--light-rule);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--navy);
+      letter-spacing: 0.1em;
+    }
+
+    h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 400;
+      line-height: 1.1;
+    }
+
+    /* PUBLICATIONS */
+    #publications .pub-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .pub-item {
+      display: grid;
+      grid-template-columns: 170px auto 1fr auto;
+      gap: 1.5rem;
+      align-items: start;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--light-rule);
+      transition: background 0.2s;
+    }
+
+    .pub-item:first-child { border-top: 1px solid var(--light-rule); }
+
+    .pub-teaser {
+      position: relative;
+      width: 170px;
+      aspect-ratio: 4 / 3;
+      border-radius: 8px;
+      overflow: hidden;
+      background: linear-gradient(140deg, #f8f2e8 0%, #eadfce 100%);
+      box-shadow: 0 16px 32px rgba(26, 22, 18, 0.08);
+      isolation: isolate;
+    }
+
+    .real-teaser::before,
+    .real-teaser::after {
+      display: none;
+    }
+
+    .real-teaser img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center center;
+      display: block;
+    }
+
+    .pub-teaser::before {
+      content: "";
+      position: absolute;
+      inset: -12%;
+      border-radius: 40%;
+      background: radial-gradient(circle at 30% 30%, rgba(196, 71, 14, 0.22), rgba(196, 71, 14, 0));
+      animation: teaserPulse 7s ease-in-out infinite;
+      z-index: -1;
+    }
+
+    .pub-teaser::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.34) 45%, transparent 78%),
+        repeating-linear-gradient(0deg, rgba(196, 71, 14, 0.06) 0px, rgba(196, 71, 14, 0.06) 1px, transparent 1px, transparent 9px);
+      mix-blend-mode: soft-light;
+      animation: teaserSweep 6.5s linear infinite;
+      pointer-events: none;
+    }
+
+    .teaser-text {
+      position: absolute;
+      left: 0.65rem;
+      bottom: 0.52rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.56rem;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: rgba(26, 22, 18, 0.76);
+      line-height: 1.2;
+    }
+
+    .teaser-llamo {
+      background:
+        radial-gradient(circle at 20% 25%, rgba(196, 71, 14, 0.24), transparent 38%),
+        linear-gradient(135deg, #f7f1e6 0%, #e7dac8 100%);
+    }
+
+    .teaser-llamo .teaser-core {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      border: 1px dashed rgba(196, 71, 14, 0.45);
+      animation: teaserSpin 12s linear infinite;
+    }
+
+    .teaser-egobody {
+      background:
+        linear-gradient(150deg, #f9f3eb 0%, #efe5d6 68%, #eadcca 100%);
+    }
+
+    .teaser-egobody .teaser-core {
+      position: absolute;
+      left: 1.15rem;
+      top: 0.9rem;
+      width: 72px;
+      height: 98px;
+      border-radius: 40px;
+      border: 1px solid rgba(196, 71, 14, 0.38);
+      box-shadow:
+        inset 0 0 0 10px rgba(196, 71, 14, 0.07),
+        inset 0 0 0 25px rgba(196, 71, 14, 0.05);
+      animation: teaserBob 4.2s ease-in-out infinite;
+    }
+
+    .teaser-social {
+      background:
+        radial-gradient(circle at 76% 24%, rgba(196, 71, 14, 0.18), transparent 45%),
+        linear-gradient(130deg, #f9f3eb 0%, #efe4d4 60%, #eadcc9 100%);
+    }
+
+    .teaser-social .teaser-core {
+      position: absolute;
+      inset: 1.1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(196, 71, 14, 0.38);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(196, 71, 14, 0.26) 4px, transparent 5px),
+        radial-gradient(circle at 72% 30%, rgba(196, 71, 14, 0.26) 4px, transparent 5px),
+        radial-gradient(circle at 58% 78%, rgba(196, 71, 14, 0.26) 4px, transparent 5px),
+        linear-gradient(25deg, transparent 0 48%, rgba(196, 71, 14, 0.3) 48% 50%, transparent 50% 100%),
+        linear-gradient(-30deg, transparent 0 46%, rgba(196, 71, 14, 0.25) 46% 48%, transparent 48% 100%);
+      animation: teaserBob 4.8s ease-in-out infinite;
+    }
+
+    .teaser-painting {
+      background:
+        linear-gradient(165deg, #fbf4eb 0%, #efdfca 75%);
+    }
+
+    .teaser-painting .teaser-core {
+      position: absolute;
+      left: 1rem;
+      right: 1rem;
+      top: 0.95rem;
+      bottom: 1.45rem;
+      border-radius: 7px;
+      border: 1px solid rgba(196, 71, 14, 0.28);
+      background:
+        linear-gradient(90deg, rgba(196, 71, 14, 0.14), rgba(196, 71, 14, 0.03) 24%, transparent 30%),
+        repeating-linear-gradient(135deg, rgba(196, 71, 14, 0.16) 0 2px, transparent 2px 9px);
+      animation: teaserSweepSlow 9s ease-in-out infinite;
+    }
+
+    .teaser-depth {
+      background:
+        radial-gradient(circle at 80% 25%, rgba(196, 71, 14, 0.2), transparent 35%),
+        linear-gradient(145deg, #f8f2e8 0%, #ede2d2 100%);
+    }
+
+    .teaser-depth .teaser-core {
+      position: absolute;
+      left: 1rem;
+      right: 1rem;
+      top: 0.95rem;
+      bottom: 1.1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(196, 71, 14, 0.3);
+      background:
+        linear-gradient(180deg, rgba(196, 71, 14, 0.16), rgba(196, 71, 14, 0.04) 52%, transparent 100%);
+      overflow: hidden;
+    }
+
+    .teaser-depth .teaser-core::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 52%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(196, 71, 14, 0.24) 0px,
+        rgba(196, 71, 14, 0.24) 1px,
+        rgba(196, 71, 14, 0) 1px,
+        rgba(196, 71, 14, 0) 8px
+      );
+      animation: teaserLift 5.2s ease-in-out infinite;
+    }
+
+    .pub-year {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--mid-gray);
+      padding-top: 0.2rem;
+      min-width: 3.5rem;
+    }
+
+    .pub-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin-bottom: 0.35rem;
+      line-height: 1.35;
+    }
+
+    .pub-authors {
+      font-size: 0.875rem;
+      color: var(--mid-gray);
+      margin-bottom: 0.35rem;
+    }
+
+    .pub-authors strong {
+      color: var(--ink);
+      font-weight: 500;
+    }
+
+    .pub-venue {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      color: var(--navy);
+    }
+
+    .pub-venue .venue-note {
+      color: var(--mid-gray);
+      font-style: italic;
+    }
+
+    .pub-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      align-items: flex-end;
+    }
+
+    .pub-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--navy);
+      text-decoration: none;
+      padding: 0.3rem 0.6rem;
+      border: 1px solid var(--light-rule);
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .pub-link:hover {
+      border-color: var(--navy);
+      color: var(--navy);
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 3rem 4rem;
+      border-top: 1px solid var(--light-rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      font-style: italic;
+    }
+
+    .footer-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      color: var(--mid-gray);
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    @keyframes teaserPulse {
+      0%, 100% { transform: translateX(0) translateY(0) scale(1); opacity: 0.95; }
+      50% { transform: translateX(6%) translateY(-5%) scale(1.08); opacity: 0.75; }
+    }
+
+    @keyframes teaserSweep {
+      from { transform: translateX(-55%); }
+      to { transform: translateX(55%); }
+    }
+
+    @keyframes teaserSweepSlow {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(7%); }
+    }
+
+    @keyframes teaserSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes teaserBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes teaserLift {
+      0%, 100% { transform: translateY(0); opacity: 0.95; }
+      50% { transform: translateY(-4px); opacity: 0.72; }
+    }
+
+
+    @keyframes wheelScroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(calc(-50% - 0.275rem)); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 2rem; }
+      nav .nav-links { gap: 1.5rem; }
+      #hero { padding: 6rem 2rem 4rem; }
+      .hero-top { gap: 1.5rem; }
+      .hero-content { grid-template-columns: 1fr; gap: 1.7rem; }
+      .hero-photo { width: 100px; height: 100px; }
+      .hero-info-item { grid-template-columns: 1fr; gap: 0.2rem; }
+      .wheel-item { width: 160px; height: 108px; }
+      .wheel-track { animation-duration: 34s; }
+      section { padding: 4rem 2rem; }
+      .pub-item { grid-template-columns: 1fr; gap: 0.75rem; }
+      .pub-teaser {
+        width: 100%;
+        max-width: 350px;
+        margin-bottom: 0.4rem;
+      }
+      .pub-links { flex-direction: row; align-items: flex-start; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span class="nav-name">Amy Zhao</span>
+    <ul class="nav-links">
+      <li><a href="#publications">Research</a></li>
+      <li><a href="https://www.linkedin.com/in/amy-zhao-a5526049" target="_blank" rel="noopener noreferrer">LinkedIn &#8599;</a></li>
+      <li><a href="https://scholar.google.com/citations?user=GzX462kAAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Scholar &#8599;</a></li>
+    </ul>
+  </nav>
+  <!-- HERO -->
+  <section id="hero" style="border-top: none;">
+    <div class="hero-content">
+      <div class="hero-summary">
+        <div class="hero-top">
+          <img src="PXL_20260308_001302050-EDIT.jpg" alt="Amy Zhao" class="hero-photo">
+          <div>
+            <h1>Amy<br><em>Zhao</em></h1>
+          </div>
+        </div>
+        <p class="hero-desc">
+          I specialize in generative models and real-time machine learning systems deployed on production VR devices, working at the intersection of research and product. 
+        </p>
+        <div class="hero-tag">
+          <span class="tag">Human Motion</span>
+          <span class="tag">Computer Vision</span>
+          <span class="tag">Generative AI</span>
+          <span class="tag">Embodied AI</span>
+        </div>
+      </div>
+
+      <div class="hero-timeline">
+        <div class="hero-info">
+          <div class="hero-info-item">
+            <span class="info-label">2024 - Present</span>
+            <span class="info-value"><strong>Meta Reality Labs</strong> - Research Scientist Manager / Tech Lead</span>
+          </div>
+          <div class="hero-info-item">
+            <span class="info-label">2019 - 2024</span>
+            <span class="info-value"><strong>Meta Reality Labs</strong> - Research Scientist</span>
+          </div>
+          <div class="hero-info-item">
+            <span class="info-label">2013 - 2019</span>
+            <span class="info-value"><strong>MIT CSAIL</strong> - PhD, EECS</span>
+          </div>
+          <div class="hero-info-item">
+            <span class="info-label">2010 - 2013</span>
+            <span class="info-value"><strong>Microsoft / Caradigm</strong> - Software Engineer</span>
+          </div>
+          <div class="hero-info-item">
+            <span class="info-label">2006 - 2010</span>
+            <span class="info-value"><strong>University of Toronto</strong> - BASc, Engineering Science</span>
+          </div>
+        </div>
+        <div class="memory-wheel">
+          <p class="wheel-label">Outside the Lab</p>
+          <div class="wheel-viewport">
+            <div class="wheel-track">
+              <div class="wheel-item"><img src="photos_wheel/thumbs/20230717_062519.jpg" alt="Personal memory photo 1"></div>
+              <div class="wheel-item"><img src="photos_wheel/thumbs/20240523_120031.jpg" alt="Personal memory photo 1"></div>
+              <div class="wheel-item"><img src="photos_wheel/thumbs/20251005_112454.jpg" alt="Personal memory photo 2"></div>
+              <div class="wheel-item"><img src="photos_wheel/thumbs/IMG_1875.jpg" alt="Personal memory photo 4"></div>
+              <div class="wheel-item"><img src="photos_wheel/thumbs/PXL_20220829_200237096.jpg" alt="Personal memory photo 5"></div>
+              <div class="wheel-item"><img src="photos_wheel/thumbs/20250523_185830.jpg" alt="Personal memory photo 6"></div>
+              <div class="wheel-item"><img src="photos_wheel/thumbs/20250928_103035.jpg" alt="Personal memory photo 7"></div>
+              <div class="wheel-item"><img src="photos_wheel/thumbs/DSC01964.jpg" alt="Personal memory photo 8"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PUBLICATIONS -->
+  <section id="publications">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Selected Research</h2>
+    </div>
+    <div class="pub-list">
+
+      <div class="pub-item">
+        <div class="pub-teaser real-teaser">
+          <img src="project_teasers/llamo.png" alt="LLaMo teaser">
+        </div>
+        <span class="pub-year">2026</span>
+        <div class="pub-body">
+          <div class="pub-title">LLaMo: Scaling Pretrained Language Models for Unified Motion Understanding and Generation with Continuous Autoregressive Tokens</div>
+          <div class="pub-authors">Z. Li, S. An, C. Tang, C. Guo, I. Shugurov, L. Zhang, <strong>A. Zhao</strong>, S. Sridhar, L. Tao, et al.</div>
+          <div class="pub-venue">CVPR 2026</div>
+        </div>
+        <div class="pub-links">
+          <a href="https://arxiv.org/abs/2602.12370" class="pub-link" target="_blank" rel="noopener noreferrer">arXiv</a>
+        </div>
+      </div>
+
+      <div class="pub-item">
+        <div class="pub-teaser real-teaser">
+          <img src="project_teasers/egobody3m.png" alt="EgoBody3M teaser">
+        </div>
+        <span class="pub-year">2024</span>
+        <div class="pub-body">
+          <div class="pub-title">EgoBody3M: Egocentric Body Tracking on a VR Headset Using a Diverse Dataset</div>
+          <div class="pub-authors"><strong>A. Zhao</strong>*, C. Tang*, L. Wang, Y. Li, M. Dave, L. Tao, C. D. Twigg, R. Y. Wang</div>
+          <div class="pub-venue">ECCV 2024 <span class="venue-note">- *equal contribution</span></div>
+        </div>
+        <div class="pub-links">
+          <a href="https://github.com/facebookresearch/EgoBody3M" class="pub-link" target="_blank" rel="noopener noreferrer">Github</a>
+        </div>
+      </div>
+
+      <div class="pub-item">
+        <div class="pub-teaser real-teaser">
+          <img src="project_teasers/social_diffusion_iccv2023.png" alt="Social Diffusion teaser">
+        </div>
+        <span class="pub-year">2023</span>
+        <div class="pub-body">
+          <div class="pub-title">Social Diffusion: Long-term Multiple Human Motion Anticipation</div>
+          <div class="pub-authors">J. Tanke, L. Zhang, <strong>A. Zhao</strong>, C. Tang, Y. Cai, L. Wang, P. C. Wu, J. Gall, et al.</div>
+          <div class="pub-venue">ICCV 2023</div>
+        </div>
+        <div class="pub-links">
+          <a href="https://github.com/jutanke/social_diffusion" class="pub-link" target="_blank" rel="noopener noreferrer">Github</a>
+        </div>
+      </div>
+
+      <div class="pub-item">
+        <div class="pub-teaser real-teaser">
+          <img src="project_teasers/painting_many_pasts.png" alt="Painting Many Pasts teaser">
+        </div>
+        <span class="pub-year">2020</span>
+        <div class="pub-body">
+          <div class="pub-title">Painting Many Pasts: Synthesizing Time Lapse Videos of Paintings</div>
+          <div class="pub-authors"><strong>A. Zhao</strong>, G. Balakrishnan, K. M. Lewis, F. Durand, J. V. Guttag, A. V. Dalca</div>
+          <div class="pub-venue">CVPR 2020</div>
+        </div>
+        <div class="pub-links">
+          <a href="https://xamyzhao.github.io/timecraft/" class="pub-link" target="_blank" rel="noopener noreferrer">Webpage</a>
+        </div>
+      </div>
+
+      <div class="pub-item">
+        <div class="pub-teaser real-teaser">
+          <img src="project_teasers/visual_deprojection.png" alt="Visual Deprojection teaser">
+        </div>
+        <span class="pub-year">2019</span>
+        <div class="pub-body">
+          <div class="pub-title">Visual Deprojection: Probabilistic Recovery of Collapsed Dimensions</div>
+          <div class="pub-authors">G. Balakrishnan, A. V. Dalca, <strong>A. Zhao</strong>, J. V. Guttag, F. Durand, W. T. Freeman</div>
+          <div class="pub-venue">ICCV 2019</div>
+        </div>
+        <div class="pub-links">
+          <a href="https://arxiv.org/abs/1909.00475" class="pub-link" target="_blank" rel="noopener noreferrer">arXiv</a>
+        </div>
+      </div>
+
+      <div class="pub-item">
+        <div class="pub-teaser real-teaser">
+          <img src="project_teasers/cvpr2019_teaser.png" alt="Data Augmentation teaser">
+        </div>
+        <span class="pub-year">2019</span>
+        <div class="pub-body">
+          <div class="pub-title">Data Augmentation Using Learned Transformations for One-Shot Medical Image Segmentation</div>
+          <div class="pub-authors"><strong>A. Zhao</strong>, G. Balakrishnan, F. Durand, J. V. Guttag, A. V. Dalca</div>
+          <div class="pub-venue">CVPR 2019 <span class="venue-note">- Oral</span></div>
+        </div>
+        <div class="pub-links">
+          <a href="https://arxiv.org/abs/1902.09383" class="pub-link" target="_blank" rel="noopener noreferrer">arXiv</a>
+          <a href="https://github.com/xamyzhao/brainstorm" class="pub-link" target="_blank" rel="noopener noreferrer">Code</a>
+        </div>
+      </div>
+
+      <div class="pub-item">
+        <div class="pub-teaser real-teaser">
+          <img src="project_teasers/voxelmorph.png" alt="VoxelMorph teaser">
+        </div>
+        <span class="pub-year">2019</span>
+        <div class="pub-body">
+          <div class="pub-title">VoxelMorph: A Learning Framework for Deformable Medical Image Registration</div>
+          <div class="pub-authors">Guha Balakrishnan, <strong>Amy Zhao</strong>, Mert R. Sabuncu, John Guttag, Adrian V. Dalca</div>
+          <div class="pub-venue">IEEE TMI: Transactions on Medical Imaging. 2019. <span class="venue-note">eprint arXiv:1809.05231</span></div>
+        </div>
+        <div class="pub-links">
+          <a href="https://arxiv.org/abs/1809.05231" class="pub-link" target="_blank" rel="noopener noreferrer">arXiv</a>
+          <a href="https://voxelmorph.mit.edu" class="pub-link" target="_blank" rel="noopener noreferrer">Webpage</a>
+        </div>
+      </div>
+
+      <div class="pub-item">
+        <div class="pub-teaser real-teaser">
+          <img src="project_teasers/cvpr_2018_posewarp_small.png" alt="Synthesizing Humans in Unseen Poses teaser">
+        </div>
+        <span class="pub-year">2018</span>
+        <div class="pub-body">
+          <div class="pub-title">Synthesizing Images of Humans in Unseen Poses</div>
+          <div class="pub-authors">G. Balakrishnan, <strong>A. Zhao</strong>, A. V. Dalca, F. Durand, J. Guttag</div>
+          <div class="pub-venue">CVPR 2018 <span class="venue-note">- Oral</span></div>
+        </div>
+        <div class="pub-links">
+          <a href="https://arxiv.org/abs/1804.07739" class="pub-link" target="_blank" rel="noopener noreferrer">arXiv</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="footer-name">Amy Zhao</span>
+    <span class="footer-note">xamyzhao.github.io</span>
+  </footer>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
